@@ -32,7 +32,7 @@
     },
     "MapSelectionFlags": {
       "Felucca": true,
-      "Trammel": false,
+      "Trammel": true,
       "Ilshenar": false,
       "Malas": false,
       "Tokuno": false,
