@@ -441,6 +441,16 @@ namespace Server.Spells
                 return true;
             }
 
+            // War Map: both mobiles are war-faction combatants on Felucca.
+            // Skip the notoriety/guild/party gates entirely — AllowHarmful enforces FF rules.
+            if (from.Map == Map.Felucca
+                && to.Map == Map.Felucca
+                && Faction.Find(from) != null
+                && Faction.Find(to) != null)
+            {
+                return true;
+            }
+
             if (to.Hidden && to.AccessLevel > from.AccessLevel)
             {
                 return false;
