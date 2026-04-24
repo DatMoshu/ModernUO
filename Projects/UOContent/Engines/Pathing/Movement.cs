@@ -470,7 +470,8 @@ namespace Server.Movement
                 {
                     var mob = mobiles[i];
 
-                    if (mob != m && mob.Z + 15 > newZ && newZ + 15 > mob.Z && !CanMoveOver(m, mob))
+                    if (mob != m && mob.Z + 15 > newZ && newZ + 15 > mob.Z
+                        && !CanMoveOver(m, mob) && !CanMoveThrough(m, mob))
                     {
                         moveIsOk = false;
                     }
@@ -483,6 +484,10 @@ namespace Server.Movement
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool CanMoveOver(Mobile m, Mobile t) =>
             !t.Alive || !m.Alive || t.IsDeadBondedPet || m.IsDeadBondedPet || t.Hidden && t.AccessLevel > AccessLevel.Player;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool CanMoveThrough(Mobile m, Mobile t) =>
+            m is BaseCreature bcM && bcM.CanMoveThrough(t);
 
         private static void GetStartZ(Mobile m, Map map, Point3D loc, List<Item> itemList, out int zLow, out int zTop)
         {

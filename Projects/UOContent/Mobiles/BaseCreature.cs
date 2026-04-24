@@ -133,8 +133,20 @@ namespace Server.Mobiles
         public int CompareTo(DamageStore ds) => (ds?.m_Damage ?? 0).CompareTo(m_Damage);
     }
 
+    /// <summary>
+    /// UOWW: delegate for cross-assembly context menu extensibility.
+    /// Custom assemblies register a handler via <see cref="BaseCreature.OnGetContextMenuEntries"/>.
+    /// </summary>
+    public delegate void ContextMenuHook(Mobile from, BaseCreature creature, ref PooledRefList<ContextMenuEntry> list);
+
     public abstract partial class BaseCreature : Mobile, IHonorTarget, IQuestGiver
     {
+        /// <summary>
+        /// UOWW extensibility hook: fires during GetContextMenuEntries for custom entries.
+        /// Custom assemblies register a handler at startup (e.g., NPC card duel menu).
+        /// </summary>
+        public static ContextMenuHook? OnGetContextMenuEntries;
+
         public enum Allegiance
         {
             None,
@@ -601,6 +613,8 @@ namespace Server.Mobiles
         public virtual bool CanMoveOverObstacles => Core.AOS || Body.IsMonster;
 
         public virtual bool CanDestroyObstacles => false;
+
+        public virtual bool CanMoveThrough(Mobile other) => false;
 
         /*
         Seems this actually was removed on OSI somewhere between the original bug report and now.
@@ -2548,6 +2562,9 @@ namespace Server.Mobiles
             }
 
             AddCustomContextEntries(from, ref list);
+
+            // UOWW: extensibility hook — custom assemblies add context menu entries here.
+            OnGetContextMenuEntries?.Invoke(from, this, ref list);
 
             if (CanTeach && from.Alive)
             {

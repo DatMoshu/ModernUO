@@ -6,6 +6,13 @@ namespace Server.Engines.Harvest
 {
     public abstract class HarvestSystem
     {
+        /// <summary>
+        /// UOWW extensibility hook: fires after every successful harvest action.
+        /// Custom assemblies register a handler at startup (e.g., card drops).
+        /// Parameters: (Mobile harvester, HarvestSystem system, HarvestDefinition def, HarvestResource resource)
+        /// </summary>
+        public static Action<Mobile, HarvestSystem, HarvestDefinition, HarvestResource>? OnHarvestCompleted;
+
         public HarvestDefinition[] Definitions { get; init; }
 
         public virtual bool CheckTool(Mobile from, Item tool)
@@ -248,6 +255,9 @@ namespace Server.Engines.Harvest
             }
 
             OnHarvestFinished(from, tool, def, vein, bank, resource, toHarvest);
+
+            // UOWW: extensibility hook — invoked after every successful harvest action.
+            OnHarvestCompleted?.Invoke(from, this, def, resource);
         }
 
         public virtual void OnHarvestFinished(
