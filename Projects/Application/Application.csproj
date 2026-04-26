@@ -23,6 +23,9 @@
         <Delete Files="..\..\Distribution\$(AssemblyName).runtimeconfig.json" ContinueOnError="true" />
     </Target>
     <ItemGroup>
+      <PackageReference Include="MailKit" Version="4.16.0" />
+    </ItemGroup>
+    <ItemGroup>
         <ProjectReference Include="..\Server\Server.csproj" />
         <ProjectReference Include="..\UOContent\UOContent.csproj" Private="false" PrivateAssets="All" IncludeAssets="None">
             <IncludeInPackage>false</IncludeInPackage>
